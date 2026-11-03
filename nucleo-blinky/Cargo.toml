@@ -1,0 +1,21 @@
+[package]
+name = "nucleo-blinky"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cortex-m = "0.7"
+cortex-m-rt = "0.7"
+panic-halt = "1.0"
+stm32f4xx-hal = { version = "0.23", features = ["stm32f401"] }
+
+# 嵌入式必须开优化，否则 flash 塞不下、延时慢得离谱。
+# dev 也开 opt-level=1 是为了单步调试时变量不被优化掉。
+[profile.dev]
+opt-level = 1
+debug = 2
+
+[profile.release]
+opt-level = "s"
+lto = true
+debug = true
