@@ -2,6 +2,8 @@
 
 板子：STM32 Nucleo-F401RE（主）、STM32F407VET6（第二块）
 
+完整计划见 [SCHEDULE.md](SCHEDULE.md)：10 周、每天 1 小时、每周有可验证的验收命令。下面是仓库里各目录对应的进度。
+
 ## lesson1/ —— 第 1 课作业
 
 ```bash
@@ -10,6 +12,8 @@ cargo test
 ```
 
 输出 `test result: ok. 3 passed` 就算过了。代码里三处 `todo!()` 换成你的实现。
+
+`lesson2/`（第 2 周）、`lesson3/`（第 3 周）还没生成，到那一周再建 —— 提前建好只是空壳，反而增加要维护的东西。
 
 ## nucleo-blinky/ —— 第 4 周用的点灯工程（已编译验证）
 
