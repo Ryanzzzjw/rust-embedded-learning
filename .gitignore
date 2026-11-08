@@ -1,1 +1,5 @@
 target/
+
+# rustlings 是第三方练习项目（自带 Cargo.toml、280M 编译产物），
+# 放在仓库里但整个目录不纳入版本控制。
+rustlings/

@@ -17,7 +17,7 @@
 
 | 周 | 主题 | 产出 | 验收 |
 |---|---|---|---|
-| 0 | 环境确认 | — | 四个命令都有输出 |
+| 0 | 环境确认 | — | 四条工具链命令有输出 + `lesson1` 报 3 failed |
 | 1 | Rust 地基：变量/类型/函数/控制流/Option/所有权 | `lesson1` 三道题 | `cargo test` → 3 passed |
 | 2 | Rust 结构：struct/enum/match/集合/trait/Result | `lesson2` 小项目 | `cargo test` 全绿 |
 | 3 | `no_std` 心智 + 位操作 + embedded-hal 阅读 | `lesson3` 无标准库库 | 交叉编译 + host 测试都过 |
@@ -34,22 +34,37 @@
 
 ## 第 0 晚（30 分钟，今晚）
 
-工具链上次已经装好并验证过，这一步只是让你自己确认一遍，别信我的话信命令：
+这一步是让你自己确认一遍，别信文档信命令。**先重开一个终端**（装完 PATH 才生效），然后在仓库根目录跑：
 
 ```bash
-rustc --version                              # 1.99.1
-rustup target list --installed               # 要看到 thumbv7em-none-eabihf
-probe-rs --version                           # 0.32.0
-cd ~/Documents/Repos/rust-embedded-learning/lesson1 && cargo test   # 预期 3 failed（todo!() 还没填）
+rustc --version                     # 要有版本号
+rustup target list --installed      # 要看到 thumbv7em-none-eabihf
+probe-rs --version                  # 要有版本号
+rustlings --version                 # 要有版本号
+cd lesson1
+cargo test                          # 预期 3 failed（todo!() 还没填）
 ```
 
-三条都对 → 直接进第 1 天。有任何一条不对就是把报错贴给我。
+四条工具链命令都有输出、最后一条是 `3 failed` → 直接进第 1 天。任何一条不对就是把完整报错贴给我。
+
+版本号不用对表：只要命令有输出就说明装对了，具体版本各平台各时间装出来不一样（这个仓库只要求 Rust **1.85+**，因为用了 edition 2024）。真正卡人的是这几句报错：
+
+| 报错 | 原因 | 怎么办 |
+|---|---|---|
+| `command not found: cargo`（Win: 不是内部或外部命令） | 没重开终端 | 关掉重开；还不行就看 PATH 里有没有 cargo 的 bin 目录 |
+| `linker 'cc' not found`（macOS） | 没装 Xcode CLT | `xcode-select --install` |
+| `linker 'link.exe' not found`（Windows） | 缺 C++ 生成工具 | 装 Visual Studio Build Tools 的「C++ 桌面开发」 |
+| `can't find crate for 'core'` / `target not installed` | 没装 M4F 目标 | `rustup target add thumbv7em-none-eabihf` |
+
+macOS / Linux / Windows 的完整安装步骤（含驱动差异）在 [README.md](README.md#环境安装)。
 
 ---
 
 ## 第 1 周：Rust 地基（7 天）
 
 目标只有一个：**让编译器当老师**，把报错读到不烦。
+
+下表第四列的 rustlings 练习在仓库里的 `rustlings/` 目录（整个目录被 `.gitignore` 忽略，不参与版本控制）。
 
 | 天 | 内容 | rustlings 对应 | 当天交付 |
 |---|---|---|---|
@@ -123,10 +138,11 @@ cargo build --target thumbv7em-none-eabihf     # 嵌入式目标编得过
 
 ```bash
 probe-rs list                     # 插上板子，应该看到一个 ST-Link
-cd nucleo-blinky && cargo run     # 已经编译验证过，这条命令应该直接点亮 LD2
+cd nucleo-blinky
+cargo run                         # 已经编译验证过，这条命令应该直接点亮 LD2
 ```
 
-看不到 ST-Link → udev 规则，见 [README](README.md) 最后一节。
+看不到 ST-Link → 按平台处理：**Linux** 装 udev 规则、**Windows** 装 ST-Link 驱动、**macOS** 免驱（先查线）。三种情况的步骤在 [README](README.md#第-4-周插板子前要做的事) 那一节。
 
 | 天 | 内容 | 交付 |
 |---|---|---|
@@ -138,7 +154,7 @@ cd nucleo-blinky && cargo run     # 已经编译验证过，这条命令应该�
 | 6 | 把 blinky 改成「呼吸灯」（软件 PWM，`for` 循环改占空比） | 亮度渐变 |
 | 7 | 复盘：写下 3 个「上板才知道」的事实 | — |
 
-本周最容易崩的两处：**烧不进去**（99% 是 udev/线/板子选错芯片型号）和**烧进去但没反应**（99% 是时钟没使能或引脚选错）。这两个都先看 `probe-rs run` 的日志，别瞎改代码。
+本周最容易崩的两处：**烧不进去**（99% 是驱动/线/板子选错芯片型号 —— Linux 查 udev、Windows 查 ST-Link 驱动、macOS 查线）和**烧进去但没反应**（99% 是时钟没使能或引脚选错）。这两个都先看 `probe-rs run` 的日志，别瞎改代码。
 
 ---
 
